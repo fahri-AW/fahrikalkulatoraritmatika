@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6d28d9">
+<title>Kalkulator Barisan & Deret Aritmatika</title>
+
+<style>
+:root {
+    --primary: #6d28d9;
+    --primary-dark: #4c1d95;
+    --primary-light: #ede9fe;
+    --bg: #f7f5ff;
+    --white: #ffffff;
+    --text: #25213a;
+    --muted: #77738b;
+    --border: #e9e5f2;
+    --success: #15803d;
+    --shadow: 0 12px 35px rgba(55, 30, 100, .08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 30px 18px;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    margin: auto;
+}
+
+/* HEADER */
+
+.header {
+    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    color: white;
+    padding: 35px 30px;
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::after {
+    content: "∑";
+    position: absolute;
+    right: 25px;
+    top: -30px;
+    font-size: 170px;
+    opacity: .12;
+    font-weight: bold;
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.header small {
+    background: rgba(255,255,255,.17);
+    padding: 7px 13px;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+.header h1 {
+    font-size: clamp(23px, 5vw, 32px);
+    margin: 20px 0 10px;
+}
+
+.header p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #eee5ff;
+    max-width: 550px;
+}
+
+/* CARD */
+
+.card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.section-description {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* MENU */
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 13px;
+}
+
+.menu-item {
+    border: 1px solid var(--border);
+    background: white;
+    padding: 20px 14px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: .2s;
+    color: var(--text);
+    min-width: 0;
+}
+
+.menu-item:hover {
+    border-color: var(--primary);
+    background: #faf8ff;
+    transform: translateY(-3px);
+}
+
+.menu-item.active {
+    border: 2px solid var(--primary);
+    background: var(--primary-light);
+}
+
+.menu-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 14px;
+}
+
+.menu-item h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.menu-item p {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* FORM */
+
+.calculator {
+    display: none;
+}
+
+.calculator.show {
+    display: block;
+    animation: fade .3s ease;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.input-group {
+    margin-bottom: 17px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    background: #fcfbff;
+    color: var(--text);
+    transition: .2s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(109,40,217,.1);
+}
+
+.formula {
+    background: var(--primary-light);
+    padding: 13px 15px;
+    border-radius: 10px;
+    color: var(--primary-dark);
+    font-size: 13px;
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+/* BUTTON */
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.btn {
+    border: none;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: #f1eff6;
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: #e7e3ef;
+}
+
+.btn-copy {
+    background: #e8f5ed;
+    color: var(--success);
+}
+
+.btn:active {
+    transform: scale(.98);
+}
+
+/* RESULT */
+
+.result-card {
+    display: none;
+    margin-top: 22px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.result-card.show {
+    display: block;
+}
+
+.result-header {
+    background: #f6f2ff;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.result-header h3 {
+    color: var(--primary-dark);
+    font-size: 15px;
+}
+
+.result-content {
+    padding: 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #39334c;
+    overflow-x: auto;
+}
+
+.result-value {
+    background: #f0fdf4;
+    color: #166534;
+    border-top: 1px solid #dcfce7;
+    padding: 15px 20px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.error {
+    display: none;
+    color: #dc2626;
+    font-size: 13px;
+    padding: 12px;
+    background: #fef2f2;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+/* FOOTER */
+
+.footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 15px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 650px) {
+    body {
+        padding: 15px 12px;
+    }
+
+    .header {
+        padding: 27px 21px;
+        border-radius: 17px;
+    }
+
+    .header::after {
+        font-size: 120px;
+        right: 10px;
+        top: 0;
+    }
+
+    .card {
+        padding: 19px;
+        border-radius: 15px;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 14px;
+    }
+
+    .menu-number {
+        flex-shrink: 0;
+        margin: 0;
+    }
+
+    .menu-item h3 {
+        margin-bottom: 4px;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group .btn {
+        width: 100%;
+    }
+
+    .result-header {
+        align-items: flex-start;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="header-content">
+            <small>MATHEMATICS TOOL</small>
+            <h1>Kalkulator Barisan & Deret Aritmatika</h1>
+            <p>
+                Hitung barisan dan deret aritmatika dengan mudah.
+                Dilengkapi langkah penyelesaian agar kamu memahami
+                proses perhitungannya.
+            </p>
+        </div>
+    </header>
+
+    <section class="card">
+        <h2 class="section-title">Pilih Jenis Perhitungan</h2>
+        <p class="section-description">
+            Pilih salah satu metode perhitungan berikut.
+        </p>
+
+        <div class="menu-grid">
+
+            <button class="menu-item" onclick="showCalculator(1)">
+                <div class="menu-number">01</div>
+                <div>
+                    <h3>Barisan Aritmatika</h3>
+                    <p>Mencari nilai suku ke-n.</p>
+                </div>
+            </button>
+
+            <button class="menu-item" onclick="showCalculator(2)">
+                <div class="menu-number">02</div>
+                <div>
+                    <h3>Mencari Nilai a dan b</h3>
+                    <p>Dari dua suku yang diketahui.</p>
+                </div>
+            </button>
+
+            <button class="menu-item" onclick="showCalculator(3)">
+                <div class="menu-number">03</div>
+                <div>
+                    <h3>Deret Aritmatika</h3>
+                    <p>Menghitung jumlah n suku pertama.</p>
+                </div>
+            </button>
+
+        </div>
+    </section>
+
+    <section class="card calculator" id="calculator">
+
+        <h2 class="section-title" id="calcTitle">Kalkulator</h2>
+        <p class="section-description" id="calcDescription">
+            Masukkan nilai yang diketahui.
+        </p>
+
+        <!-- MENU 1 -->
+        <div id="form1" style="display:none">
+
+            <div class="formula">
+                <strong>Rumus:</strong><br>
+                Un = a + (n - 1)b
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Suku ke-n (n)</label>
+                    <input type="number" id="u1_n" value="5">
+                </div>
+
+                <div class="input-group">
+                    <label>Suku pertama (a)</label>
+                    <input type="number" id="u1_a" value="2" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label>Beda (b)</label>
+                    <input type="number" id="u1_b" value="3" step="any">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="aritmatika1()">
+                Hitung Sekarang
+            </button>
+        </div>
+
+        <!-- MENU 2 -->
+        <div id="form2" style="display:none">
+
+            <div class="formula">
+                <strong>Rumus:</strong><br>
+                Un = a + (n - 1)b<br>
+                Gunakan dua persamaan untuk mencari a dan b.
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Nomor suku pertama</label>
+                    <input type="number" id="u2_info1" value="3">
+                </div>
+
+                <div class="input-group">
+                    <label>Nilai suku pertama</label>
+                    <input type="number" id="u2_hasil1" value="8" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label>Nomor suku kedua</label>
+                    <input type="number" id="u2_info2" value="5">
+                </div>
+
+                <div class="input-group">
+                    <label>Nilai suku kedua</label>
+                    <input type="number" id="u2_hasil2" value="14" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label>Tentukan suku ke-n</label>
+                    <input type="number" id="u2_suku_akhir" value="10">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="aritmatika2()">
+                Hitung Sekarang
+            </button>
+        </div>
+
+        <!-- MENU 3 -->
+        <div id="form3" style="display:none">
+
+            <div class="formula">
+                <strong>Rumus:</strong><br>
+                Sn = n/2 (2a + (n - 1)b)
+            </div>
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Jumlah suku (n)</label>
+                    <input type="number" id="s3_sn" value="5">
+                </div>
+
+                <div class="input-group">
+                    <label>Suku pertama (a)</label>
+                    <input type="number" id="s3_a" value="2" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label>Beda (b)</label>
+                    <input type="number" id="s3_b" value="3" step="any">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="aritmatika3()">
+                Hitung Sekarang
+            </button>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <h3>Hasil Penyelesaian</h3>
+                <button class="btn btn-copy" onclick="copyResult()">
+                    Salin Hasil
+                </button>
+            </div>
+
+            <div class="result-content" id="resultContent"></div>
+            <div class="result-value" id="resultValue"></div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                ← Kembali ke Menu
+            </button>
+        </div>
+
+    </section>
+
+    <footer class="footer">
+        Kalkulator Matematika | Barisan dan Deret Aritmatika
+    </footer>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let currentMenu = 0;
+
+function showCalculator(menu) {
+    currentMenu = menu;
+
+    $('calculator').classList.add('show');
+    $('form1').style.display = menu === 1 ? 'block' : 'none';
+    $('form2').style.display = menu === 2 ? 'block' : 'none';
+    $('form3').style.display = menu === 3 ? 'block' : 'none';
+
+    document.querySelectorAll('.menu-item').forEach((item, index) => {
+        item.classList.toggle('active', index + 1 === menu);
+    });
+
+    const titles = {
+        1: 'Barisan Aritmatika',
+        2: 'Mencari Nilai a dan b',
+        3: 'Deret Aritmatika'
+    };
+
+    const descriptions = {
+        1: 'Hitung nilai suku tertentu berdasarkan suku pertama dan beda.',
+        2: 'Tentukan suku pertama dan beda menggunakan dua suku yang diketahui.',
+        3: 'Hitung jumlah seluruh suku dalam suatu deret aritmatika.'
+    };
+
+    $('calcTitle').textContent = titles[menu];
+    $('calcDescription').textContent = descriptions[menu];
+
+    $('resultCard').classList.remove('show');
+    $('error').style.display = 'none';
+
+    $('calculator').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+function getNumber(id) {
+    const input = $(id);
+    const value = input.value.trim();
+
+    if (value === '') return null;
+
+    const number = Number(value);
+
+    return Number.isFinite(number) ? number : null;
+}
+
+function validIndex(n) {
+    return Number.isInteger(n) && n >= 1;
+}
+
+function format(n) {
+    if (!Number.isFinite(n)) return 'Tidak terdefinisi';
+
+    return Number(n.toFixed(8)).toString();
+}
+
+function displayResult(text, value) {
+    $('resultContent').textContent = text;
+    $('resultValue').textContent = value;
+
+    $('error').style.display = 'none';
+    $('resultCard').classList.add('show');
+
+    $('resultCard').scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+    });
+}
+
+function showError(message) {
+    $('error').textContent = message;
+    $('error').style.display = 'block';
+    $('resultCard').classList.remove('show');
+}
+
+function resetCalculator() {
+    $('calculator').classList.remove('show');
+    $('resultCard').classList.remove('show');
+    $('error').style.display = 'none';
+
+    currentMenu = 0;
+
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+// MENU 1
+function aritmatika1() {
+    const n = getNumber('u1_n');
+    const a = getNumber('u1_a');
+    const b = getNumber('u1_b');
+
+    if (n === null || a === null || b === null) {
+        return showError('Mohon lengkapi seluruh input.');
+    }
+
+    if (!validIndex(n)) {
+        return showError('Nomor suku harus bilangan bulat positif.');
+    }
+
+    const perkalian = (n - 1) * b;
+    const hasil = a + perkalian;
+
+    const output =
+`BARISAN ARITMATIKA
+
+Rumus:
+Un = a + (n - 1)b
+
+Diketahui:
+n = ${n}
+a = ${format(a)}
+b = ${format(b)}
+
+Penyelesaian:
+
+U${n} = a + (n - 1)b
+U${n} = ${format(a)} + (${n} - 1) × ${format(b)}
+U${n} = ${format(a)} + ${format(perkalian)}
+U${n} = ${format(hasil)}`;
+
+    displayResult(output, `Jadi, U${n} = ${format(hasil)}`);
+}
+
+// MENU 2
+function aritmatika2() {
+    const n1 = getNumber('u2_info1');
+    const u1 = getNumber('u2_hasil1');
+    const n2 = getNumber('u2_info2');
+    const u2 = getNumber('u2_hasil2');
+    const target = getNumber('u2_suku_akhir');
+
+    if ([n1, u1, n2, u2, target].some(v => v === null)) {
+        return showError('Mohon lengkapi seluruh input.');
+    }
+
+    if (![n1, n2, target].every(validIndex)) {
+        return showError('Nomor suku harus bilangan bulat positif.');
+    }
+
+    if (n1 === n2) {
+        return showError('Nomor kedua suku harus berbeda.');
+    }
+
+    const beda = (u2 - u1) / (n2 - n1);
+    const a = u1 - (n1 - 1) * beda;
+    const hasil = a + (target - 1) * beda;
+
+    const output =
+`MENCARI SUKU PERTAMA DAN BEDA
+
+Diketahui:
+U${n1} = ${format(u1)}
+U${n2} = ${format(u2)}
+
+1. Membuat persamaan
+
+U${n1} = a + (${n1} - 1)b
+a + ${n1 - 1}b = ${format(u1)}
+
+U${n2} = a + (${n2} - 1)b
+a + ${n2 - 1}b = ${format(u2)}
+
+2. Mencari beda (b)
+
+b = (U${n2} - U${n1}) / (${n2} - ${n1})
+
+b = (${format(u2)} - ${format(u1)}) / (${n2} - ${n1})
+
+b = ${format(beda)}
+
+3. Mencari suku pertama (a)
+
+a = U${n1} - (${n1} - 1)b
+
+a = ${format(u1)} - (${n1 - 1}) × ${format(beda)}
+
+a = ${format(a)}
+
+4. Menentukan U${target}
+
+Un = a + (n - 1)b
+
+U${target} = ${format(a)} + (${target} - 1) × ${format(beda)}
+
+U${target} = ${format(a)} + ${format((target - 1) * beda)}
+
+U${target} = ${format(hasil)}`;
+
+    displayResult(
+        output,
+        `a = ${format(a)} | b = ${format(beda)} | U${target} = ${format(hasil)}`
+    );
+}
+
+// MENU 3
+function aritmatika3() {
+    const n = getNumber('s3_sn');
+    const a = getNumber('s3_a');
+    const b = getNumber('s3_b');
+
+    if (n === null || a === null || b === null) {
+        return showError('Mohon lengkapi seluruh input.');
+    }
+
+    if (!validIndex(n)) {
+        return showError('Jumlah suku harus bilangan bulat positif.');
+    }
+
+    const term1 = 2 * a;
+    const term2 = (n - 1) * b;
+    const jumlah = n / 2 * (term1 + term2);
+
+    const output =
+`DERET ARITMATIKA
+
+Rumus:
+Sn = n/2 (2a + (n - 1)b)
+
+Diketahui:
+n = ${n}
+a = ${format(a)}
+b = ${format(b)}
+
+Penyelesaian:
+
+S${n} = ${n}/2 (2 × ${format(a)} + (${n} - 1) × ${format(b)})
+
+S${n} = ${format(n / 2)} (${format(term1)} + ${format(term2)})
+
+S${n} = ${format(n / 2)} × ${format(term1 + term2)}
+
+S${n} = ${format(jumlah)}`;
+
+    displayResult(
+        output,
+        `Jumlah ${n} suku pertama adalah ${format(jumlah)}`
+    );
+}
+
+// SALIN HASIL
+function copyResult() {
+    const text =
+        $('resultContent').textContent +
+        '\n\n' +
+        $('resultValue').textContent;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(() => alert('Hasil berhasil disalin!'))
+            .catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        document.execCommand('copy');
+        alert('Hasil berhasil disalin!');
+    } catch {
+        alert('Gagal menyalin hasil.');
+    }
+
+    textarea.remove();
+}
+</script>
+
+</body>
+</html>
